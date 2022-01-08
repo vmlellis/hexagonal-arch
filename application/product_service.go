@@ -1,6 +1,9 @@
 package application
 
-import "github.com/vmlellis/go-hexagonal/application/contract"
+import (
+	"github.com/vmlellis/go-hexagonal/application/contract"
+	"github.com/vmlellis/go-hexagonal/application/entity"
+)
 
 type productService struct {
 	Persistence contract.ProductPersistenceInterface
@@ -19,7 +22,7 @@ func (s *productService) Get(id string) (contract.ProductInterface, error) {
 }
 
 func (s *productService) Create(name string, price float64) (contract.ProductInterface, error) {
-	product := NewProduct(name, price)
+	product := entity.NewProduct(name, price)
 	_, err := product.IsValid()
 	if err != nil {
 		return product, err

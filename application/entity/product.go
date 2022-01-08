@@ -1,4 +1,4 @@
-package application
+package entity
 
 import (
 	"errors"
@@ -17,7 +17,7 @@ const (
 	ENABLED  = "enabled"
 )
 
-type product struct {
+type Product struct {
 	ID     string  `valid:"uuidv4"`
 	Name   string  `valid:"required"`
 	Price  float64 `valid:"float,optional"`
@@ -25,7 +25,7 @@ type product struct {
 }
 
 func NewProduct(name string, price float64) contract.ProductInterface {
-	return &product{
+	return &Product{
 		ID:     uuid.NewV4().String(),
 		Status: DISABLED,
 		Name:   name,
@@ -33,7 +33,7 @@ func NewProduct(name string, price float64) contract.ProductInterface {
 	}
 }
 
-func (p *product) IsValid() (bool, error) {
+func (p *Product) IsValid() (bool, error) {
 	if p.Status == "" {
 		p.Status = DISABLED
 	}
@@ -54,7 +54,7 @@ func (p *product) IsValid() (bool, error) {
 	return true, nil
 }
 
-func (p *product) Enable() error {
+func (p *Product) Enable() error {
 	if p.Price > 0 {
 		p.Status = ENABLED
 		return nil
@@ -62,7 +62,7 @@ func (p *product) Enable() error {
 	return errors.New("the price must be greater than zero to enable the product")
 }
 
-func (p *product) Disable() error {
+func (p *Product) Disable() error {
 	if p.Price == 0 {
 		p.Status = DISABLED
 		return nil
@@ -71,18 +71,18 @@ func (p *product) Disable() error {
 
 }
 
-func (p *product) GetId() string {
+func (p *Product) GetId() string {
 	return p.ID
 }
 
-func (p *product) GetName() string {
+func (p *Product) GetName() string {
 	return p.Name
 }
 
-func (p *product) GetStatus() string {
+func (p *Product) GetStatus() string {
 	return p.Status
 }
 
-func (p *product) GetPrice() float64 {
+func (p *Product) GetPrice() float64 {
 	return p.Price
 }

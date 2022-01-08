@@ -1,4 +1,4 @@
-package application
+package entity
 
 import (
 	"testing"
@@ -8,7 +8,7 @@ import (
 )
 
 func TestProduct_Enable(t *testing.T) {
-	product := product{
+	product := Product{
 		Name:   "Hello",
 		Status: DISABLED,
 		Price:  10,
@@ -23,7 +23,7 @@ func TestProduct_Enable(t *testing.T) {
 }
 
 func TestProduct_Disable(t *testing.T) {
-	product := product{
+	product := Product{
 		Name:   "Hello",
 		Status: ENABLED,
 		Price:  0,
@@ -38,7 +38,7 @@ func TestProduct_Disable(t *testing.T) {
 }
 
 func TestProduct_IsValid(t *testing.T) {
-	product := product{
+	product := Product{
 		ID:     uuid.NewV4().String(),
 		Name:   "hello",
 		Status: DISABLED,
