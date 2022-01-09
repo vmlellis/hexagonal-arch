@@ -1,4 +1,4 @@
-package application
+package service
 
 import (
 	"github.com/vmlellis/go-hexagonal/application/contract"

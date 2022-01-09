@@ -9,13 +9,13 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/vmlellis/go-hexagonal/application"
 	"github.com/vmlellis/go-hexagonal/application/adapters/db"
+	"github.com/vmlellis/go-hexagonal/application/service"
 )
 
 var dbInstance, _ = sql.Open("sqlite3", "sqlite.db")
 var productDb = db.NewProductDb(dbInstance)
-var productService = application.NewProductService(productDb)
+var productService = service.NewProductService(productDb)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
