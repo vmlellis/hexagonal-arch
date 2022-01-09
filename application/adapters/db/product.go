@@ -6,6 +6,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 
 	"github.com/vmlellis/go-hexagonal/application/contract"
+	"github.com/vmlellis/go-hexagonal/application/dto"
 	"github.com/vmlellis/go-hexagonal/application/entity"
 )
 
@@ -18,7 +19,7 @@ func NewProductDb(db *sql.DB) *ProductDb {
 }
 
 func (p *ProductDb) Get(id string) (contract.ProductInterface, error) {
-	var product entity.Product
+	var product dto.ProductDto
 	stmt, err := p.db.Prepare("select id, name, price, status from products where id=?")
 	if err != nil {
 		return nil, err
@@ -27,7 +28,8 @@ func (p *ProductDb) Get(id string) (contract.ProductInterface, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &product, nil
+
+	return entity.RegisterProduct(product), nil
 }
 
 func (p *ProductDb) Save(product contract.ProductInterface) (contract.ProductInterface, error) {

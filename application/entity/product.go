@@ -6,6 +6,7 @@ import (
 	"github.com/asaskevich/govalidator"
 	uuid "github.com/satori/go.uuid"
 	"github.com/vmlellis/go-hexagonal/application/contract"
+	"github.com/vmlellis/go-hexagonal/application/dto"
 )
 
 func init() {
@@ -17,7 +18,7 @@ const (
 	ENABLED  = "enabled"
 )
 
-type Product struct {
+type product struct {
 	ID     string  `valid:"uuidv4"`
 	Name   string  `valid:"required"`
 	Price  float64 `valid:"float,optional"`
@@ -25,7 +26,7 @@ type Product struct {
 }
 
 func NewProduct(name string, price float64) contract.ProductInterface {
-	return &Product{
+	return &product{
 		ID:     uuid.NewV4().String(),
 		Status: DISABLED,
 		Name:   name,
@@ -33,7 +34,16 @@ func NewProduct(name string, price float64) contract.ProductInterface {
 	}
 }
 
-func (p *Product) IsValid() (bool, error) {
+func RegisterProduct(productDto dto.ProductDto) contract.ProductInterface {
+	return &product{
+		ID:     productDto.ID,
+		Status: productDto.Status,
+		Name:   productDto.Name,
+		Price:  productDto.Price,
+	}
+}
+
+func (p *product) IsValid() (bool, error) {
 	if p.Status == "" {
 		p.Status = DISABLED
 	}
@@ -54,7 +64,7 @@ func (p *Product) IsValid() (bool, error) {
 	return true, nil
 }
 
-func (p *Product) Enable() error {
+func (p *product) Enable() error {
 	if p.Price > 0 {
 		p.Status = ENABLED
 		return nil
@@ -62,7 +72,7 @@ func (p *Product) Enable() error {
 	return errors.New("the price must be greater than zero to enable the product")
 }
 
-func (p *Product) Disable() error {
+func (p *product) Disable() error {
 	if p.Price == 0 {
 		p.Status = DISABLED
 		return nil
@@ -71,18 +81,18 @@ func (p *Product) Disable() error {
 
 }
 
-func (p *Product) GetId() string {
+func (p *product) GetId() string {
 	return p.ID
 }
 
-func (p *Product) GetName() string {
+func (p *product) GetName() string {
 	return p.Name
 }
 
-func (p *Product) GetStatus() string {
+func (p *product) GetStatus() string {
 	return p.Status
 }
 
-func (p *Product) GetPrice() float64 {
+func (p *product) GetPrice() float64 {
 	return p.Price
 }
