@@ -72,7 +72,6 @@ func (p *ProductDb) update(product contract.ProductInterface) (contract.ProductI
 		`UPDATE products SET name=?, price=?, status=? WHERE id = ?`,
 		product.GetName(),
 		product.GetPrice(),
-		product.GetPrice(),
 		product.GetStatus(),
 		product.GetId(),
 	)
