@@ -6,6 +6,7 @@ import (
 
 	"github.com/codegangsta/negroni"
 	"github.com/gorilla/mux"
+	"github.com/vmlellis/go-hexagonal/application/adapters/web/domain"
 	"github.com/vmlellis/go-hexagonal/application/contract"
 )
 
@@ -13,6 +14,10 @@ func MakeProducHandlers(r *mux.Router, n *negroni.Negroni, service contract.Prod
 	r.Handle("/product/{id}", n.With(
 		negroni.Wrap(getProduct(service)),
 	)).Methods("GET", "OPTIONS")
+
+	r.Handle("/product", n.With(
+		negroni.Wrap(createProduct(service)),
+	)).Methods("POST", "OPTIONS")
 }
 
 func getProduct(service contract.ProductServiceInterface) http.Handler {
@@ -23,6 +28,36 @@ func getProduct(service contract.ProductServiceInterface) http.Handler {
 		product, err := service.Get(id)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		err = json.NewEncoder(w).Encode(product)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	})
+}
+
+func createProduct(service contract.ProductServiceInterface) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set(" Content-Type", "application/json")
+		var productRequest domain.ProductRequest
+		err := json.NewDecoder(r.Body).Decode(&productRequest)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write(jsonError(err.Error()))
+			return
+		}
+		product, err := productRequest.Bind()
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write(jsonError(err.Error()))
+			return
+		}
+		product, err = service.Create(product.GetName(), product.GetPrice())
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write(jsonError(err.Error()))
 			return
 		}
 		err = json.NewEncoder(w).Encode(product)
