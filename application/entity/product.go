@@ -78,7 +78,6 @@ func (p *product) Disable() error {
 		return nil
 	}
 	return errors.New("the price must be zero in order to have the product disabled")
-
 }
 
 func (p *product) GetId() string {
